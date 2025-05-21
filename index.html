@@ -130,7 +130,7 @@
       scanLine.style.transform = `translateX(${jitter}px)`;
 
       // 🔴 Glitch dots – small only (2–4px)
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 5; i++) {
         if (Math.random() > 0.5) {
           const dot = document.createElement('div');
           dot.classList.add('glitch-dot');
