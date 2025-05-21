@@ -9,16 +9,28 @@
       color: white;
       font-family: Calibri, sans-serif;
       text-align: center;
-      padding-top: 50px;
+      padding-top: 30px;
+    }
+    #container {
+      position: relative;
+      display: inline-block;
+      max-width: 90%;
+    }
+    #scan-image {
+      width: 100%;
+      border-radius: 12px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+    }
+    #scan-line {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: red;
+      pointer-events: none;
     }
     audio {
       margin-top: 20px;
-    }
-    img {
-      margin-top: 30px;
-      max-width: 90%;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(0,0,0,0.3);
     }
   </style>
 </head>
@@ -26,14 +38,43 @@
 
   <h1>NOAA19 May 14 Pass</h1>
 
-  <!-- Audio -->
-  <audio controls autoplay>
+  <!-- Audio player -->
+  <audio id="audio" controls>
     <source src="NOAA19May14-small-short.wav" type="audio/wav">
     Your browser does not support the audio element.
   </audio>
 
-  <!-- Image -->
-<img src="raw_sync copy.png" alt="Satellite Pass Image">
+  <!-- Image + scan line -->
+  <div id="container">
+    <img id="scan-image" src="raw_sync_copy.png" alt="Satellite Pass">
+    <div id="scan-line"></div>
+  </div>
+
+  <script>
+    const audio = document.getElementById('audio');
+    const scanLine = document.getElementById('scan-line');
+    const container = document.getElementById('container');
+
+    function updateScanLine() {
+      const imageHeight = container.offsetHeight;
+      const duration = audio.duration;
+      const currentTime = audio.currentTime;
+
+      if (!isNaN(duration) && duration > 0) {
+        const progress = currentTime / duration;
+        const top = imageHeight * progress;
+        scanLine.style.top = `${top}px`;
+      }
+
+      if (!audio.paused && !audio.ended) {
+        requestAnimationFrame(updateScanLine);
+      }
+    }
+
+    audio.addEventListener('play', () => {
+      requestAnimationFrame(updateScanLine);
+    });
+  </script>
 
 </body>
 </html>
