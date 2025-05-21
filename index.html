@@ -1,4 +1,3 @@
-You said:
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,16 +33,16 @@ You said:
       background-color: red;
       pointer-events: none;
       display: none;
-      box-shadow: 0 0 10px red;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.4);
     }
 
     .glitch-dot {
       position: absolute;
       background-color: red;
-      border-radius: 50%;
+      width: 1px;
+      height: 1px;
       pointer-events: none;
       opacity: 0.9;
-      filter: blur(0.5px);
     }
 
     #noise {
@@ -79,13 +78,11 @@ You said:
 
   <h1>NOAA19 May 14 Pass</h1>
 
-  <!-- Audio player -->
   <audio id="audio" controls>
     <source src="NOAA19May14-small-short.wav" type="audio/wav">
     Your browser does not support the audio element.
   </audio>
 
-  <!-- Image + scan line + noise -->
   <div id="container">
     <img id="scan-image" src="raw_sync%20copy.png" alt="Satellite Pass">
     <div id="scan-line"></div>
@@ -115,38 +112,40 @@ You said:
       error.textContent = "❌ Error: Image not found. Check the file name.";
     };
 
-    function glitchyScan() {
-      if (audio.paused || audio.ended || !imageHeight) return;
-
-      const speed = Math.random() * 2 + 1.5; // 1.5–3.5 px/frame
-      const flickerHeight = 2 + Math.random() * 12;
+    function updateScanLine() {
+      const speed = Math.random() * 2 + 1.5;
+      const height = 2 + Math.random() * 12;
       const jitter = (Math.random() - 0.5) * 2;
 
       scanY += speed;
 
-      // 🔁 Reset to top when reaching bottom
       if (scanY >= imageHeight) {
         scanY = 0;
       }
 
-      scanLine.style.top = ${scanY}px;
-      scanLine.style.height = ${flickerHeight}px;
-      scanLine.style.transform = translateX(${jitter}px);
+      scanLine.style.top = `${scanY}px`;
+      scanLine.style.height = `${height}px`;
+      scanLine.style.transform = `translateX(${jitter}px)`;
+    }
 
-      // 🔴 MORE glitch dots with varied size
-      for (let i = 0; i < 3; i++) {
-        if (Math.random() > 0.7) {
+    function createGlitchDots() {
+      for (let i = 0; i < 5; i++) {
+        if (Math.random() > 0.5) {
           const dot = document.createElement('div');
           dot.classList.add('glitch-dot');
-          const size = 2 + Math.random() * 8;
-          dot.style.width = ${size}px;
-          dot.style.height = ${size}px;
-          dot.style.top = ${scanY + Math.random() * flickerHeight}px;
-          dot.style.left = ${Math.random() * container.offsetWidth}px;
+          dot.style.top = `${scanY + Math.floor(Math.random() * 4)}px`;
+          dot.style.left = `${Math.floor(Math.random() * container.offsetWidth)}px`;
           container.appendChild(dot);
-          setTimeout(() => container.removeChild(dot), 300 + Math.random() * 400);
+          setTimeout(() => container.removeChild(dot), 300 + Math.random() * 500);
         }
       }
+    }
+
+    function glitchyScan() {
+      if (audio.paused || audio.ended || !imageHeight) return;
+
+      updateScanLine();
+      createGlitchDots();
 
       requestAnimationFrame(glitchyScan);
     }
