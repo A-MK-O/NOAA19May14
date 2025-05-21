@@ -29,7 +29,7 @@
       position: absolute;
       left: 0;
       width: 100%;
-      height: 2px;
+      height: 2px; /* constant thin line */
       background-color: red;
       pointer-events: none;
       display: none;
@@ -42,7 +42,7 @@
       border-radius: 50%;
       pointer-events: none;
       opacity: 0.9;
-      filter: blur(0.5px);
+      filter: blur(0.6px);
     }
 
     #noise {
@@ -118,33 +118,30 @@
       if (audio.paused || audio.ended || !imageHeight) return;
 
       const speed = Math.random() * 2 + 1.5; // 1.5–3.5 px/frame
-      const flickerHeight = 2 + Math.random() * 12;
       const jitter = (Math.random() - 0.5) * 2;
 
       scanY += speed;
 
-      // 🔁 Reset to top when reaching bottom
       if (scanY >= imageHeight) {
-        scanY = 0;
+        scanY = 0; // 🔁 reset to top
       }
 
+      // Update scan line position
       scanLine.style.top = `${scanY}px`;
-      scanLine.style.height = `${flickerHeight}px`;
+      scanLine.style.height = `2px`; // constant
       scanLine.style.transform = `translateX(${jitter}px)`;
 
-      // 🔴 MORE glitch dots with varied size
-      for (let i = 0; i < 3; i++) {
-        if (Math.random() > 0.7) {
-          const dot = document.createElement('div');
-          dot.classList.add('glitch-dot');
-          const size = 2 + Math.random() * 8;
-          dot.style.width = `${size}px`;
-          dot.style.height = `${size}px`;
-          dot.style.top = `${scanY + Math.random() * flickerHeight}px`;
-          dot.style.left = `${Math.random() * container.offsetWidth}px`;
-          container.appendChild(dot);
-          setTimeout(() => container.removeChild(dot), 300 + Math.random() * 400);
-        }
+      // 🔴 Glitch dots (more, random size)
+      for (let i = 0; i < 5; i++) {
+        const dot = document.createElement('div');
+        dot.classList.add('glitch-dot');
+        const size = 2 + Math.random() * 8;
+        dot.style.width = `${size}px`;
+        dot.style.height = `${size}px`;
+        dot.style.top = `${scanY + Math.random() * 5}px`;
+        dot.style.left = `${Math.random() * container.offsetWidth}px`;
+        container.appendChild(dot);
+        setTimeout(() => container.removeChild(dot), 300 + Math.random() * 500);
       }
 
       requestAnimationFrame(glitchyScan);
