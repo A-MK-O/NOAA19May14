@@ -33,7 +33,7 @@
       background-color: red;
       pointer-events: none;
       display: none;
-      box-shadow: 0 0 10px red;
+      box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 40px rgba(255, 0, 0, 0.4);
     }
 
     .glitch-dot {
@@ -115,9 +115,9 @@
     function glitchyScan() {
       if (audio.paused || audio.ended || !imageHeight) return;
 
-      const speed = Math.random() * 2 + 1.5;
-      const flickerHeight = 2 + Math.random() * 12;
-      const jitter = (Math.random() - 0.5) * 2;
+      const speed = Math.random() * 2 + 1.5; // speed varies
+      const height = 2 + Math.random() * 20; // random stretch (halo)
+      const jitter = (Math.random() - 0.5) * 3; // side flicker
 
       scanY += speed;
 
@@ -125,16 +125,17 @@
         scanY = 0;
       }
 
+      // Apply flicker + halo
       scanLine.style.top = `${scanY}px`;
-      scanLine.style.height = `2px`;
+      scanLine.style.height = `${height}px`;
       scanLine.style.transform = `translateX(${jitter}px)`;
 
-      // 🔴 1x1 pixel glitch dots
+      // Draw tiny glitch dots
       for (let i = 0; i < 5; i++) {
         if (Math.random() > 0.5) {
           const dot = document.createElement('div');
           dot.classList.add('glitch-dot');
-          dot.style.top = `${scanY + Math.floor(Math.random() * flickerHeight)}px`;
+          dot.style.top = `${scanY + Math.floor(Math.random() * height)}px`;
           dot.style.left = `${Math.floor(Math.random() * container.offsetWidth)}px`;
           container.appendChild(dot);
           setTimeout(() => container.removeChild(dot), 300 + Math.random() * 500);
