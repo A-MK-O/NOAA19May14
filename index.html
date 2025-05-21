@@ -38,12 +38,11 @@
 
     .glitch-dot {
       position: absolute;
-      width: 3px;
-      height: 3px;
       background-color: red;
       border-radius: 50%;
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.9;
+      filter: blur(0.5px);
     }
 
     #noise {
@@ -104,7 +103,6 @@
 
     let imageHeight = 0;
     let scanY = 0;
-    let direction = 1; // 1 = down, -1 = up
 
     image.onload = () => {
       imageHeight = image.offsetHeight;
@@ -119,34 +117,34 @@
     function glitchyScan() {
       if (audio.paused || audio.ended || !imageHeight) return;
 
-      const speed = Math.random() * 2 + 1; // Speed varies 1–3 px/frame
-      const flickerHeight = 2 + Math.random() * 10; // Line height flickers
-      const jitter = (Math.random() - 0.5) * 2; // Small horizontal jitter
+      const speed = Math.random() * 2 + 1.5; // 1.5–3.5 px/frame
+      const flickerHeight = 2 + Math.random() * 12;
+      const jitter = (Math.random() - 0.5) * 2;
 
-      scanY += speed * direction;
+      scanY += speed;
 
-      // Reverse direction when reaching top or bottom
+      // 🔁 Reset to top when reaching bottom
       if (scanY >= imageHeight) {
-        scanY = imageHeight;
-        direction = -1;
-      } else if (scanY <= 0) {
         scanY = 0;
-        direction = 1;
       }
 
-      // Apply flicker and position
       scanLine.style.top = `${scanY}px`;
       scanLine.style.height = `${flickerHeight}px`;
       scanLine.style.transform = `translateX(${jitter}px)`;
 
-      // Red glitch dot (sparkle effect)
-      if (Math.random() > 0.94) {
-        const dot = document.createElement('div');
-        dot.classList.add('glitch-dot');
-        dot.style.top = `${scanY + (Math.random() * flickerHeight)}px`;
-        dot.style.left = `${Math.random() * container.offsetWidth}px`;
-        container.appendChild(dot);
-        setTimeout(() => container.removeChild(dot), 400 + Math.random() * 300);
+      // 🔴 MORE glitch dots with varied size
+      for (let i = 0; i < 3; i++) {
+        if (Math.random() > 0.7) {
+          const dot = document.createElement('div');
+          dot.classList.add('glitch-dot');
+          const size = 2 + Math.random() * 8;
+          dot.style.width = `${size}px`;
+          dot.style.height = `${size}px`;
+          dot.style.top = `${scanY + Math.random() * flickerHeight}px`;
+          dot.style.left = `${Math.random() * container.offsetWidth}px`;
+          container.appendChild(dot);
+          setTimeout(() => container.removeChild(dot), 300 + Math.random() * 400);
+        }
       }
 
       requestAnimationFrame(glitchyScan);
@@ -154,7 +152,6 @@
 
     audio.addEventListener('play', () => {
       scanY = 0;
-      direction = 1;
       scanLine.style.display = 'block';
       noise.style.display = 'block';
       requestAnimationFrame(glitchyScan);
