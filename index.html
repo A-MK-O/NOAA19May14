@@ -39,10 +39,8 @@
     .glitch-dot {
       position: absolute;
       background-color: red;
-      border-radius: 50%;
       pointer-events: none;
       opacity: 0.9;
-      filter: blur(0.5px);
     }
 
     #noise {
@@ -132,9 +130,9 @@
       scanLine.style.height = `${flickerHeight}px`;
       scanLine.style.transform = `translateX(${jitter}px)`;
 
-      // 🔴 MORE glitch dots with varied size
-      for (let i = 0; i < 3; i++) {
-        if (Math.random() > 0.7) {
+      // 🔴 More glitch dots (square)
+      for (let i = 0; i < 5; i++) {
+        if (Math.random() > 0.5) {
           const dot = document.createElement('div');
           dot.classList.add('glitch-dot');
           const size = 2 + Math.random() * 8;
@@ -142,8 +140,10 @@
           dot.style.height = `${size}px`;
           dot.style.top = `${scanY + Math.random() * flickerHeight}px`;
           dot.style.left = `${Math.random() * container.offsetWidth}px`;
+          dot.style.borderRadius = '0';
+          dot.style.filter = 'none';
           container.appendChild(dot);
-          setTimeout(() => container.removeChild(dot), 300 + Math.random() * 400);
+          setTimeout(() => container.removeChild(dot), 300 + Math.random() * 500);
         }
       }
 
