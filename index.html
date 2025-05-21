@@ -11,17 +11,20 @@
       text-align: center;
       padding-top: 30px;
     }
+
     #container {
       position: relative;
       display: inline-block;
       max-width: 90%;
     }
+
     #scan-image {
       width: 100%;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
       display: block;
     }
+
     #scan-line {
       position: absolute;
       left: 0;
@@ -31,6 +34,7 @@
       pointer-events: none;
       display: none;
     }
+
     audio {
       margin-top: 20px;
     }
@@ -67,8 +71,9 @@
       const currentTime = audio.currentTime;
 
       if (!isNaN(duration) && duration > 0) {
-        const progress = currentTime / duration;
-        const top = imageHeight * progress;
+        // 🔴 Scan line moves 10x faster than real time
+        const progress = (currentTime / duration) * 10;
+        const top = imageHeight * Math.min(progress, 1); // Clamp at 100%
         scanLine.style.top = `${top}px`;
       }
 
@@ -77,13 +82,13 @@
       }
     }
 
-    // Wait until the image is fully loaded to get its height
+    // Wait until the image is fully loaded
     image.onload = () => {
       imageHeight = image.offsetHeight;
       scanLine.style.display = 'block';
     };
 
-    // Start animation when audio plays
+    // Start scan animation on play
     audio.addEventListener('play', () => {
       imageHeight = image.offsetHeight;
       requestAnimationFrame(updateScanLine);
