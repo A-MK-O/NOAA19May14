@@ -115,26 +115,27 @@
     function glitchyScan() {
       if (audio.paused || audio.ended || !imageHeight) return;
 
-      const speed = Math.random() * 2 + 1.5;
+      const speed = Math.random() * 2 + 1.5; // 1.5–3.5 px/frame
       const flickerHeight = 2 + Math.random() * 12;
       const jitter = (Math.random() - 0.5) * 2;
 
       scanY += speed;
 
+      // 🔁 Reset to top when reaching bottom
       if (scanY >= imageHeight) {
         scanY = 0;
       }
 
       scanLine.style.top = `${scanY}px`;
-      scanLine.style.height = `2px`;
+      scanLine.style.height = `${flickerHeight}px`;
       scanLine.style.transform = `translateX(${jitter}px)`;
 
-      // 🔴 Glitch dots – small only (2–4px)
+      // 🔴 More glitch dots (square)
       for (let i = 0; i < 5; i++) {
         if (Math.random() > 0.5) {
           const dot = document.createElement('div');
           dot.classList.add('glitch-dot');
-          const size = 2 + Math.random() * 2; // max 4px
+          const size = 2 + Math.random() * 8;
           dot.style.width = `${size}px`;
           dot.style.height = `${size}px`;
           dot.style.top = `${scanY + Math.random() * flickerHeight}px`;
