@@ -33,6 +33,35 @@
       background-color: red;
       pointer-events: none;
       display: none;
+      box-shadow: 0 0 8px red;
+      animation: flicker 0.12s infinite;
+    }
+
+    @keyframes flicker {
+      0% { transform: translateX(0px); }
+      25% { transform: translateX(-1px); }
+      50% { transform: translateX(1px); }
+      75% { transform: translateX(-0.5px); }
+      100% { transform: translateX(0px); }
+    }
+
+    #noise {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.08;
+      background: url('https://i.imgur.com/TVh4xss.png') repeat;
+      background-size: 200px 200px;
+      display: none;
+      animation: noiseMove 1s linear infinite;
+    }
+
+    @keyframes noiseMove {
+      from { background-position: 0 0; }
+      to { background-position: 50px 50px; }
     }
 
     audio {
@@ -55,13 +84,13 @@
     Your browser does not support the audio element.
   </audio>
 
-  <!-- Image + scan line -->
+  <!-- Image + scan line + noise -->
   <div id="container">
     <img id="scan-image" src="raw_sync_copy.png" alt="Satellite Pass">
     <div id="scan-line"></div>
+    <div id="noise"></div>
   </div>
 
-  <!-- Optional error message -->
   <div id="error"></div>
 
   <script>
@@ -69,17 +98,17 @@
     const scanLine = document.getElementById('scan-line');
     const image = document.getElementById('scan-image');
     const container = document.getElementById('container');
+    const noise = document.getElementById('noise');
     const error = document.getElementById('error');
 
     let imageHeight = 0;
 
-    // Handle image load
     image.onload = () => {
       imageHeight = image.offsetHeight;
       scanLine.style.display = 'block';
+      noise.style.display = 'none'; // wait for audio
     };
 
-    // Handle image load failure
     image.onerror = () => {
       error.textContent = "❌ Error: Image not found. Please ensure 'raw_sync_copy.png' is uploaded and named correctly.";
     };
@@ -87,16 +116,15 @@
     function updateScanLine() {
       if (!imageHeight) {
         imageHeight = image.offsetHeight;
-        if (!imageHeight) return; // Wait for valid height
+        if (!imageHeight) return;
       }
 
       const duration = audio.duration;
       const currentTime = audio.currentTime;
 
       if (!isNaN(duration) && duration > 0) {
-        // 🔴 Scan 10x faster than real time
         const progress = (currentTime / duration) * 10;
-        const top = imageHeight * Math.min(progress, 1); // Clamp to 100%
+        const top = imageHeight * Math.min(progress, 1);
         scanLine.style.top = `${top}px`;
       }
 
@@ -105,10 +133,19 @@
       }
     }
 
-    // Start scanning when audio plays
     audio.addEventListener('play', () => {
       imageHeight = image.offsetHeight;
+      scanLine.style.display = 'block';
+      noise.style.display = 'block';
       requestAnimationFrame(updateScanLine);
+    });
+
+    audio.addEventListener('pause', () => {
+      noise.style.display = 'none';
+    });
+
+    audio.addEventListener('ended', () => {
+      noise.style.display = 'none';
     });
   </script>
 
