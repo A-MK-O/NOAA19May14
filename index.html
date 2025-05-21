@@ -29,19 +29,19 @@
       position: absolute;
       left: 0;
       width: 100%;
-      height: 2px; /* constant thin line */
+      height: 2px;
       background-color: red;
       pointer-events: none;
       display: none;
       box-shadow: 0 0 10px red;
     }
-    
-.glitch-dot {
-  position: absolute;
-  background-color: red;
-  pointer-events: none;
-  opacity: 0.9;
-}
+
+    .glitch-dot {
+      position: absolute;
+      background-color: red;
+      pointer-events: none;
+      opacity: 0.9;
+    }
 
     #noise {
       position: absolute;
@@ -126,10 +126,10 @@
 
       // Update scan line position
       scanLine.style.top = `${scanY}px`;
-      scanLine.style.height = `2px`; // constant
+      scanLine.style.height = `2px`;
       scanLine.style.transform = `translateX(${jitter}px)`;
 
-      // 🔴 Glitch dots (more, random size)
+      // 🔴 Glitch dots (square)
       for (let i = 0; i < 5; i++) {
         const dot = document.createElement('div');
         dot.classList.add('glitch-dot');
@@ -138,6 +138,8 @@
         dot.style.height = `${size}px`;
         dot.style.top = `${scanY + Math.random() * 5}px`;
         dot.style.left = `${Math.random() * container.offsetWidth}px`;
+        dot.style.borderRadius = '0';
+        dot.style.filter = 'none';
         container.appendChild(dot);
         setTimeout(() => container.removeChild(dot), 300 + Math.random() * 500);
       }
