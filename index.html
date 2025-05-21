@@ -86,7 +86,7 @@
 
   <!-- Image + scan line + noise -->
   <div id="container">
-    <img id="scan-image" src="raw_sync_copy.png" alt="Satellite Pass">
+    <img id="scan-image" src="raw_sync%20copy.png" alt="Satellite Pass">
     <div id="scan-line"></div>
     <div id="noise"></div>
   </div>
@@ -110,7 +110,7 @@
     };
 
     image.onerror = () => {
-      error.textContent = "❌ Error: Image not found. Please ensure 'raw_sync_copy.png' is uploaded and named correctly.";
+      error.textContent = "❌ Error: Image not found. Please ensure the file is named exactly 'raw_sync copy.png'.";
     };
 
     function updateScanLine() {
