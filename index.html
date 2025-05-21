@@ -20,6 +20,7 @@
       width: 100%;
       border-radius: 12px;
       box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
+      display: block;
     }
     #scan-line {
       position: absolute;
@@ -28,6 +29,7 @@
       height: 2px;
       background-color: red;
       pointer-events: none;
+      display: none;
     }
     audio {
       margin-top: 20px;
@@ -53,10 +55,14 @@
   <script>
     const audio = document.getElementById('audio');
     const scanLine = document.getElementById('scan-line');
+    const image = document.getElementById('scan-image');
     const container = document.getElementById('container');
 
+    let imageHeight = 0;
+
     function updateScanLine() {
-      const imageHeight = container.offsetHeight;
+      if (!imageHeight) return;
+
       const duration = audio.duration;
       const currentTime = audio.currentTime;
 
@@ -71,7 +77,15 @@
       }
     }
 
+    // Wait until the image is fully loaded to get its height
+    image.onload = () => {
+      imageHeight = image.offsetHeight;
+      scanLine.style.display = 'block';
+    };
+
+    // Start animation when audio plays
     audio.addEventListener('play', () => {
+      imageHeight = image.offsetHeight;
       requestAnimationFrame(updateScanLine);
     });
   </script>
