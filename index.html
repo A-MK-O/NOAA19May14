@@ -33,16 +33,16 @@
       background-color: red;
       pointer-events: none;
       display: none;
-      box-shadow: 0 0 8px red;
-      animation: flicker 0.12s infinite;
+      box-shadow: 0 0 10px red;
     }
 
-    @keyframes flicker {
-      0% { transform: translateX(0px); }
-      25% { transform: translateX(-1px); }
-      50% { transform: translateX(1px); }
-      75% { transform: translateX(-0.5px); }
-      100% { transform: translateX(0px); }
+    .glitch-dot {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background-color: red;
+      pointer-events: none;
+      opacity: 0.8;
     }
 
     #noise {
@@ -86,7 +86,7 @@
 
   <!-- Image + scan line + noise -->
   <div id="container">
-    <img id="scan-image" src="raw_sync copy.png" alt="Satellite Pass">
+    <img id="scan-image" src="raw_sync%20copy.png" alt="Satellite Pass">
     <div id="scan-line"></div>
     <div id="noise"></div>
   </div>
@@ -102,44 +102,57 @@
     const error = document.getElementById('error');
 
     let imageHeight = 0;
+    let scanY = 0;
 
+    // Setup when image loads
     image.onload = () => {
       imageHeight = image.offsetHeight;
       scanLine.style.display = 'block';
-      noise.style.display = 'none'; // wait for audio
+      noise.style.display = 'none';
     };
 
     image.onerror = () => {
-      error.textContent = "❌ Error: Image not found. Please ensure the file is named exactly 'raw_sync copy.png'.";
+      error.textContent = "❌ Error: Image not found. Check the file name.";
     };
 
-    function updateScanLine() {
-      if (!imageHeight) {
-        imageHeight = image.offsetHeight;
-        if (!imageHeight) return;
+    // Glitchy scan animation
+    function glitchyScan() {
+      if (audio.paused || audio.ended || !imageHeight) return;
+
+      // Random flicker and speed
+      const speed = Math.random() * 2 + 0.5; // 0.5–2.5 px/frame
+      const jitter = Math.random() > 0.8 ? (Math.random() - 0.5) * 20 : 0;
+      const glitchHeight = Math.random() > 0.9 ? Math.random() * 10 + 1 : 2;
+
+      scanY += speed;
+      if (scanY > imageHeight) return;
+
+      // Move + resize scan line
+      scanLine.style.top = `${scanY + jitter}px`;
+      scanLine.style.height = `${glitchHeight}px`;
+
+      // Chance to drop a glitch dot
+      if (Math.random() > 0.92) {
+        const dot = document.createElement('div');
+        dot.classList.add('glitch-dot');
+        dot.style.top = `${scanY + Math.random() * 5}px`;
+        dot.style.left = `${Math.random() * container.offsetWidth}px`;
+        container.appendChild(dot);
+        setTimeout(() => container.removeChild(dot), 700);
       }
 
-      const duration = audio.duration;
-      const currentTime = audio.currentTime;
-
-      if (!isNaN(duration) && duration > 0) {
-        const progress = (currentTime / duration) * 10;
-        const top = imageHeight * Math.min(progress, 1);
-        scanLine.style.top = `${top}px`;
-      }
-
-      if (!audio.paused && !audio.ended) {
-        requestAnimationFrame(updateScanLine);
-      }
+      requestAnimationFrame(glitchyScan);
     }
 
+    // Audio start
     audio.addEventListener('play', () => {
-      imageHeight = image.offsetHeight;
+      scanY = 0;
       scanLine.style.display = 'block';
       noise.style.display = 'block';
-      requestAnimationFrame(updateScanLine);
+      requestAnimationFrame(glitchyScan);
     });
 
+    // Stop noise on pause
     audio.addEventListener('pause', () => {
       noise.style.display = 'none';
     });
