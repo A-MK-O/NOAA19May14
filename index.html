@@ -38,6 +38,11 @@
     audio {
       margin-top: 20px;
     }
+
+    #error {
+      color: red;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -56,22 +61,37 @@
     <div id="scan-line"></div>
   </div>
 
+  <div id="error"></div>
+
   <script>
     const audio = document.getElementById('audio');
     const scanLine = document.getElementById('scan-line');
     const image = document.getElementById('scan-image');
     const container = document.getElementById('container');
+    const error = document.getElementById('error');
 
     let imageHeight = 0;
 
+    // Failsafe image load
+    image.onload = () => {
+      imageHeight = image.offsetHeight;
+      scanLine.style.display = 'block';
+    };
+
+    image.onerror = () => {
+      error.textContent = "❌ Error: Image not found. Check if 'raw_sync_copy.png' is uploaded correctly.";
+    };
+
     function updateScanLine() {
-      if (!imageHeight) return;
+      if (!imageHeight) {
+        imageHeight = image.offsetHeight;
+        if (!imageHeight) return; // wait for valid height
+      }
 
       const duration = audio.duration;
       const currentTime = audio.currentTime;
 
       if (!isNaN(duration) && duration > 0) {
-        // 🔴 Scan line moves 10x faster than real time
         const progress = (currentTime / duration) * 10;
         const top = imageHeight * Math.min(progress, 1); // Clamp at 100%
         scanLine.style.top = `${top}px`;
@@ -82,13 +102,6 @@
       }
     }
 
-    // Wait until the image is fully loaded
-    image.onload = () => {
-      imageHeight = image.offsetHeight;
-      scanLine.style.display = 'block';
-    };
-
-    // Start scan animation on play
     audio.addEventListener('play', () => {
       imageHeight = image.offsetHeight;
       requestAnimationFrame(updateScanLine);
