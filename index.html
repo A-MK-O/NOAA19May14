@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>NOAA19 May 14</title>
   <style>
     body {
@@ -68,6 +67,7 @@
 
     audio {
       margin-top: 20px;
+      max-width: 90%;
     }
 
     #error {
@@ -80,13 +80,15 @@
 
   <h1>NOAA19 May 14 Pass</h1>
 
+  <!-- Audio player -->
   <audio id="audio" controls>
     <source src="NOAA19May14-small-short.wav" type="audio/wav">
     Your browser does not support the audio element.
   </audio>
 
+  <!-- Image + scan line + noise -->
   <div id="container">
-    <img id="scan-image" src="raw_sync%20copy.png" alt="Satellite Pass">
+    <img id="scan-image" src="raw_sync_copy.png" alt="Satellite Pass">
     <div id="scan-line"></div>
     <div id="noise"></div>
   </div>
@@ -145,10 +147,8 @@
 
     function glitchyScan() {
       if (audio.paused || audio.ended || !imageHeight) return;
-
       updateScanLine();
       createGlitchDots();
-
       requestAnimationFrame(glitchyScan);
     }
 
@@ -166,6 +166,11 @@
     audio.addEventListener('ended', () => {
       noise.style.display = 'none';
     });
+
+    // 💡 Debug helper: shows JS errors directly on the page
+    window.onerror = function (msg, src, lineno, colno, errorObj) {
+      error.textContent = `⚠️ JS Error: ${msg} (line ${lineno}:${colno})`;
+    };
   </script>
 
 </body>
