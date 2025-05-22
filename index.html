@@ -11,7 +11,6 @@
       font-family: Calibri, sans-serif;
       text-align: center;
       padding-top: 30px;
-      margin: 0;
     }
 
     #container {
@@ -35,14 +34,12 @@
       background-color: white;
       pointer-events: none;
       display: none;
-      box-shadow:
-        0 0 20px rgba(255, 255, 255, 0.8),
-        0 0 40px rgba(173, 216, 230, 0.4);
+      box-shadow: 0 0 20px rgba(173, 216, 230, 0.7), 0 0 40px rgba(173, 216, 230, 0.4);
     }
 
     .glitch-dot {
       position: absolute;
-      background-color: red;
+      background-color: white;
       width: 1px;
       height: 1px;
       pointer-events: none;
@@ -57,7 +54,7 @@
       height: 100%;
       pointer-events: none;
       opacity: 0.08;
-      background: url('https://i.ibb.co/7GNXTPw/noise.png') repeat;
+      background: url('https://via.placeholder.com/200x200') repeat;
       background-size: 200px 200px;
       display: none;
       animation: noiseMove 1s linear infinite;
@@ -120,7 +117,7 @@
     };
 
     function updateScanLine() {
-      const speed = Math.random() * 0.5 + 0.5; // Slow flicker
+      const speed = Math.random() * 0.5 + 0.5; // Slower scan speed
       const height = 2 + Math.random() * 12;
       const jitter = (Math.random() - 0.5) * 2;
 
@@ -159,6 +156,9 @@
       scanY = 0;
       scanLine.style.display = 'block';
       noise.style.display = 'block';
+      // Force reload of the noise background image to prevent caching issues
+      const timestamp = new Date().getTime();
+      noise.style.backgroundImage = `url('https://via.placeholder.com/200x200?${timestamp}')`;
       requestAnimationFrame(glitchyScan);
     });
 
@@ -170,7 +170,7 @@
       noise.style.display = 'none';
     });
 
-    // Show JavaScript errors directly
+    // Show JS errors if they happen
     window.onerror = function (msg, src, lineno, colno, errorObj) {
       error.textContent = `⚠️ JS Error: ${msg} (line ${lineno}:${colno})`;
     };
@@ -178,5 +178,3 @@
 
 </body>
 </html>
-
-<!-- force rebuild -->
