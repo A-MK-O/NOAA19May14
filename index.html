@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>NOAA19 May 14</title>
   <style>
     body {
@@ -11,6 +11,7 @@
       font-family: Calibri, sans-serif;
       text-align: center;
       padding-top: 30px;
+      margin: 0;
     }
 
     #container {
@@ -34,7 +35,9 @@
       background-color: white;
       pointer-events: none;
       display: none;
-      box-shadow: 0 0 20px rgba(173, 216, 230, 0.7), 0 0 40px rgba(173, 216, 230, 0.4);
+      box-shadow:
+        0 0 20px rgba(255, 255, 255, 0.8),
+        0 0 40px rgba(173, 216, 230, 0.4);
     }
 
     .glitch-dot {
@@ -54,7 +57,7 @@
       height: 100%;
       pointer-events: none;
       opacity: 0.08;
-      background: url('https://i.imgur.com/TVh4xss.png') repeat;
+      background: url('https://i.ibb.co/7GNXTPw/noise.png') repeat;
       background-size: 200px 200px;
       display: none;
       animation: noiseMove 1s linear infinite;
@@ -117,7 +120,7 @@
     };
 
     function updateScanLine() {
-      const speed = Math.random() * 0.5 + 0.5; // Slower scan speed
+      const speed = Math.random() * 0.5 + 0.5; // Slow flicker
       const height = 2 + Math.random() * 12;
       const jitter = (Math.random() - 0.5) * 2;
 
@@ -167,7 +170,7 @@
       noise.style.display = 'none';
     });
 
-    // Show JS errors if they happen
+    // Show JavaScript errors directly
     window.onerror = function (msg, src, lineno, colno, errorObj) {
       error.textContent = `⚠️ JS Error: ${msg} (line ${lineno}:${colno})`;
     };
@@ -176,6 +179,4 @@
 </body>
 </html>
 
-
 <!-- force rebuild -->
-
